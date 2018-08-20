@@ -21,10 +21,13 @@ namespace SharpFireStarter
         /// <param name="appID"></param>
         public FireBaseDB(string appID, string webAPIKey)
         {
+            if (!Uri.IsWellFormedUriString(appID, UriKind.RelativeOrAbsolute))
+                throw new UriFormatException("The given AppID URL Structure is not valid");
+
             this.appID = appID;
             this.webAPIKey = webAPIKey;
 
-            Log("Initialized with AppID " + appID);
+            Logger.Log("Initialized with AppID " + appID);
         }
 
 
@@ -39,34 +42,32 @@ namespace SharpFireStarter
         {
             //Validate Request
             if (email == string.Empty)
-                Log("Email for Auth not provided.");
-            else if(password == string.Empty)
-                Log("Password for Auth not provided.");
+            {
+                Logger.Log("Email for Auth not provided.");
+                return;
+            }
+            else if (password == string.Empty)
+            {
+                Logger.Log("Password for Auth not provided.");
+                return;
+            }
             else if (webAPIKey == string.Empty)
-                Log("WebAPI Key for Auth not provided.");
+            {
+                Logger.Log("WebAPI Key for Auth not provided.");
+                return;
+            }
 
             string value = await Activity.Auth.Authenticate(email, password, webAPIKey);
-            
-            if(value != string.Empty && value != "")
+
+            if (value != string.Empty && value != "")
             {
                 oAuthToken = value;
-                Log("oAuth Token Received: " + oAuthToken);
+                Logger.Log("oAuth Token Received: " + oAuthToken);
             }
             else
             {
-                Log("Failed to Authenticate. Check your Username and Password.");
+                Logger.Log("Failed to Authenticate. Check your Username and Password.");
             }
         }
-
-
-        /// <summary>
-        /// Log Out Messages to Console
-        /// </summary>
-        /// <param name="message"></param>
-        private static void Log(string message)
-        {
-            Console.WriteLine("SharpFireStarter: " + message);
-        }
-
     }
 }

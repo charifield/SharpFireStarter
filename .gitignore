@@ -1,4 +1,9 @@
 
 *.pdb
+bin/
+bin/Debug/
 bin/Debug/SharpFireStarter.dll
 *.cache
+*.lock
+
+

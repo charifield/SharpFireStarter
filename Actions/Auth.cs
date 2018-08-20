@@ -22,41 +22,34 @@ namespace SharpFireStarter.Activity
         /// <param name="password"></param>
         public static Task<string> Authenticate(string email, string password, string webAPIKey)
         {
-            Log(string.Format("Begin Autherntication for {0}...", email));
+            Log(string.Format("Begin Authentication for {0}...", email));
             var client = new HttpClient();
+
+
+            var taskResult = new TaskCompletionSource<string>();
+            taskResult.SetResult("");
 
             try
             {
-                var taskResult = new TaskCompletionSource<string>();
-                taskResult.SetResult("");
-
-                try
-                {
-                    var values = new Dictionary<string, string>
+                var values = new Dictionary<string, string>
                 {
                     { "email", email },
                     {"password", password }
                 };
 
-                    var content = new FormUrlEncodedContent(values);
-                    var response = client.PostAsync(authEndPoint + webAPIKey, content);
-                    response.Wait();
-                    var responseString = response.Result.Content.ReadAsStringAsync();
-                    responseString.Wait();
+                var content = new FormUrlEncodedContent(values);
+                var response = client.PostAsync(authEndPoint + webAPIKey, content);
+                response.Wait();
+                var responseString = response.Result.Content.ReadAsStringAsync();
+                responseString.Wait();
 
-                    if (responseString.Result != null && responseString.Result != "")
-                    {
-                        var objects = JObject.Parse(responseString.Result);
-                        taskResult.SetResult(objects["idToken"].ToString());
-                    }
-                }
-                catch (Exception ex)
+                if (responseString.Result != null && responseString.Result != "")
                 {
-                    Log(ex.Message);
+                    var objects = JObject.Parse(responseString.Result);
+                    return Task.FromResult(objects["idToken"].ToString());
                 }
-
-                Log("oAuth Success. Returning Token...");
-                return taskResult.Task;
+                else
+                    throw new UnauthorizedAccessException("Failed to obtain Token. Check Credentials");
             }
             catch (Exception ex)
             {
