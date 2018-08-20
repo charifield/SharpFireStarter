@@ -6,7 +6,10 @@ C:\HexOS\SharpFireStarter\obj\Debug\SharpFireStarter.dll
 C:\HexOS\SharpFireStarter\obj\Debug\SharpFireStarter.pdb
 C:\PersonalProjects\SharpFireStarter\bin\Debug\SharpFireStarter.dll
 C:\PersonalProjects\SharpFireStarter\bin\Debug\SharpFireStarter.pdb
-C:\PersonalProjects\SharpFireStarter\obj\Debug\SharpFireStarter.csprojResolveAssemblyReference.cache
 C:\PersonalProjects\SharpFireStarter\obj\Debug\SharpFireStarter.csproj.CoreCompileInputs.cache
 C:\PersonalProjects\SharpFireStarter\obj\Debug\SharpFireStarter.dll
 C:\PersonalProjects\SharpFireStarter\obj\Debug\SharpFireStarter.pdb
+C:\PersonalProjects\SharpFireStarter\bin\Debug\Newtonsoft.Json.dll
+C:\PersonalProjects\SharpFireStarter\bin\Debug\Newtonsoft.Json.xml
+C:\PersonalProjects\SharpFireStarter\obj\Debug\SharpFireStarter.csproj.CopyComplete
+C:\PersonalProjects\SharpFireStarter\obj\Debug\SharpFireStarter.csprojResolveAssemblyReference.cache

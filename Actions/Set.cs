@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SharpFireStarter
 {
-    public class Auth
+    class Set
     {
     }
 }
