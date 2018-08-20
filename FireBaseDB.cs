@@ -23,6 +23,8 @@ namespace SharpFireStarter
         {
             this.appID = appID;
             this.webAPIKey = webAPIKey;
+
+            Log("Initialized with AppID " + appID);
         }
 
 

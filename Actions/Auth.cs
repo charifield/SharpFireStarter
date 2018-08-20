@@ -22,6 +22,7 @@ namespace SharpFireStarter.Activity
         /// <param name="password"></param>
         public static Task<string> Authenticate(string email, string password, string webAPIKey)
         {
+            Log(string.Format("Begin Autherntication for {0}...", email));
             var client = new HttpClient();
 
             try
@@ -51,8 +52,10 @@ namespace SharpFireStarter.Activity
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Log(ex.Message);
                 }
+
+                Log("oAuth Success. Returning Token...");
                 return taskResult.Task;
             }
             catch (Exception ex)
@@ -64,6 +67,7 @@ namespace SharpFireStarter.Activity
             {
                 client.CancelPendingRequests();
                 client.Dispose();
+                Log("Client Connection Closed");
             }
         }
 
