@@ -68,6 +68,17 @@ namespace SharpFireStarter
             {
                 Logger.Log("Failed to Authenticate. Check your Username and Password.");
             }
+            
+        }
+
+
+        /// <summary>
+        /// Write to the Firebase DB
+        /// </summary>
+        /// <param name="data"></param>
+        public void WriteToDB(string data)
+        {
+            Activity.Set.WriteToDB(appID, "/todos", oAuthToken, "");
         }
     }
 }
