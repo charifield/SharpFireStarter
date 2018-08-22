@@ -38,35 +38,37 @@ namespace SharpFireStarter
         /// <param name="email"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public async void Authenticate(string email, string password)
+        public bool Authenticate(string email, string password)
         {
             //Validate Request
             if (email == string.Empty)
             {
                 Logger.Log("Email for Auth not provided.");
-                return;
+                return false;
             }
             else if (password == string.Empty)
             {
                 Logger.Log("Password for Auth not provided.");
-                return;
+                return false;
             }
             else if (webAPIKey == string.Empty)
             {
                 Logger.Log("WebAPI Key for Auth not provided.");
-                return;
+                return false;
             }
 
-            string value = await Activity.Auth.Authenticate(email, password, webAPIKey);
+            string value = Activity.Auth.Authenticate(email, password, webAPIKey);
 
             if (value != string.Empty && value != "")
             {
                 oAuthToken = value;
                 Logger.Log("oAuth Token Received: " + oAuthToken);
+                return true;
             }
             else
             {
                 Logger.Log("Failed to Authenticate. Check your Username and Password.");
+                return false;
             }
             
         }
@@ -76,9 +78,17 @@ namespace SharpFireStarter
         /// Write to the Firebase DB
         /// </summary>
         /// <param name="data"></param>
-        public void WriteToDB(string data)
+        public bool WriteToDB(string data)
         {
             Activity.Set.WriteToDB(appID, "/todos", oAuthToken, "");
+            return true;
+        }
+
+
+        public string GetFromDB(string data)
+        {
+            return "";
+            //return Activity.
         }
     }
 }

@@ -20,7 +20,8 @@ namespace SharpFireStarter.Activity
         /// </summary>
         /// <param name="email"></param>
         /// <param name="password"></param>
-        public static Task<string> Authenticate(string email, string password, string webAPIKey)
+        //public static Task<string> Authenticate(string email, string password, string webAPIKey)
+        public static string Authenticate(string email, string password, string webAPIKey)
         {
             Log(string.Format("Begin Authentication for {0}...", email));
             var client = new HttpClient();
@@ -46,7 +47,7 @@ namespace SharpFireStarter.Activity
                 if (responseString.Result != null && responseString.Result != "")
                 {
                     var objects = JObject.Parse(responseString.Result);
-                    return Task.FromResult(objects["idToken"].ToString());
+                    return objects["idToken"].ToString();
                 }
                 else
                     throw new UnauthorizedAccessException("Failed to obtain Token. Check Credentials");
@@ -54,7 +55,7 @@ namespace SharpFireStarter.Activity
             catch (Exception ex)
             {
                 Log(ex.Message);
-                return Task.FromResult("");
+                return "";
             }
             finally
             {

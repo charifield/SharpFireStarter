@@ -7,5 +7,10 @@ namespace SharpFireStarter
 {
     class Get
     {
+        public static async void GetFromDB(string appID, string node, string oAuth, string data)
+        {
+
+
+        }
     }
 }
