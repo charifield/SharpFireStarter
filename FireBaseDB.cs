@@ -85,10 +85,16 @@ namespace SharpFireStarter
         }
 
 
-        public string GetFromDB(string data)
+
+        /// <summary>
+        /// Get Data from the Firebasse DB
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public async Task<string> GetFromDB(string data)
         {
-            return "";
-            //return Activity.
+            string getData = await Activity.Get.GetFromDB(appID, data, oAuthToken);
+            return getData;
         }
     }
 }
