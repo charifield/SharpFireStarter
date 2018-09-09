@@ -2,11 +2,16 @@
 
 ![Pass](https://camo.githubusercontent.com/5b9a317a67c1a001a0c702867523aa997755140b/68747470733a2f2f63692e6170707665796f722e636f6d2f6170692f70726f6a656374732f7374617475732f657038787732326365786b74676862613f7376673d74727565)
 
+
 Simple .NET Framework Wrapper for Rest calls API for the Firebase RealTime Database.
 
 ### Installation
 ```
- Download and build project in Visual Studio. Once build, add reference to SharpFireStarter.dll to you project
+//Download DLL
+Download the SharpFireStarter.dll file in the debug folder and reference it to your project.
+
+//Build on your Machine
+ Download the project add reference it to your project
 ```
 
 ### Supported Frameworks
@@ -59,10 +64,9 @@ db.WriteToDB("firebase/path/to/yourdata", obj);
 ```
 [![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://nodesource.com/products/nsolid)
 
-License
-----
 
-MIT
+#### Creative Commons Lisence
+![Pass](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Cc-by_new.svg/40px-Cc-by_new.svg.png)Licensees may copy, distribute, display and perform the work and make derivative works and remixes based on it only if they give the author or licensor the credits (attribution) in the manner specified by these.
 
 
 **Free Software, Hell Yeah!**
