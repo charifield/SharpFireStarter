@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,20 +12,30 @@ namespace SharpFireStarter.Activity
     public static class Set
     {
 
-        public static async void WriteToDB(string appID, string node, string oAuth, string data)
+        public static async void WriteToDB(string appID, string node, string oAuth, object data)
         {
-            string endpoint = string.Format("{0}/{1}.json?access_token={2}", appID, node, oAuth); 
+            string endpoint = "";
+
+            if (oAuth != "")
+            {
+                endpoint = string.Format("{0}/{1}/.json?auth={2}", appID, node, oAuth);
+            }
+            else
+            {
+                endpoint = string.Format("{0}/{1}/.json", appID, node);
+            }
 
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(endpoint);
             //httpWebRequest.ContentType = "application/json; charset=utf-8";
             httpWebRequest.ContentType = "application/json-patch+json; charset=utf-8";
             httpWebRequest.Method = "PATCH";
-            httpWebRequest.Headers.Add("Authorization", "Bearer " + oAuth);
+            //httpWebRequest.Headers.Add("Authorization", "Bearer " + oAuth);
 
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
-                string json = "[  { \"ReferenceId\": \"a123\"  } ]";
-                streamWriter.Write(json);
+                //string json = "[  { \"ReferenceId\": \"a123\"  } ]";
+                var newData = JsonConvert.SerializeObject(data);
+                streamWriter.Write(newData);
                 streamWriter.Flush();
                 streamWriter.Close();
             }

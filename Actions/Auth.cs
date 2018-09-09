@@ -35,7 +35,8 @@ namespace SharpFireStarter.Activity
                 var values = new Dictionary<string, string>
                 {
                     { "email", email },
-                    {"password", password }
+                    {"password", password },
+                    {"returnSecureToken", "true" }
                 };
 
                 var content = new FormUrlEncodedContent(values);

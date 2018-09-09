@@ -12,8 +12,8 @@ namespace SharpFireStarter.Activity
     {
         public static Task<string> GetFromDB(string appID, string node, string oAuth)
         {
-            //string endpoint = string.Format("{0}/{1}.json?access_token={2}", appID, node, oAuth);
-            string endpoint = string.Format("{0}/{1}.json", appID, node);
+            string endpoint = string.Format("{0}/{1}.json?auth={2}", appID, node, oAuth);
+            //string endpoint = string.Format("{0}/{1}.json", appID, node);
 
 
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(endpoint);
