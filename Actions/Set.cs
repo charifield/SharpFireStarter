@@ -12,7 +12,7 @@ namespace SharpFireStarter.Activity
     public static class Set
     {
 
-        public static async void WriteToDB(string appID, string node, string oAuth, object data)
+        public static void WriteToDB(string appID, string node, string oAuth, object data)
         {
             string endpoint = "";
 

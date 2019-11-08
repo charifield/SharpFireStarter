@@ -19,12 +19,12 @@ namespace SharpFireStarter
         /// Initialize FirebaseConnector with AppID and WebAPI Key (Found on your Firebase Console Online)
         /// </summary>
         /// <param name="appID"></param>
-        public FireBaseDB(string appID, string webAPIKey)
+        public FireBaseDB(string appURL, string appID, string webAPIKey)
         {
             if (!Uri.IsWellFormedUriString(appID, UriKind.RelativeOrAbsolute))
                 throw new UriFormatException("The given AppID URL Structure is not valid");
 
-            this.appID = appID;
+            this.appID = appURL + "/" + appID;
             this.webAPIKey = webAPIKey;
 
             Logger.Log("Initialized with AppID " + appID);

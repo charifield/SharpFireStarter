@@ -12,3 +12,11 @@ C:\PersonalProjects\SharpFireStarter\obj\Debug\SharpFireStarter.csproj.CoreCompi
 C:\PersonalProjects\SharpFireStarter\obj\Debug\SharpFireStarter.dll
 C:\PersonalProjects\SharpFireStarter\obj\Debug\SharpFireStarter.pdb
 C:\PersonalProjects\SharpFireStarter\obj\Debug\SharpFireStarter.csprojResolveAssemblyReference.cache
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\bin\Debug\SharpFireStarter.dll
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\bin\Debug\SharpFireStarter.pdb
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\bin\Debug\Newtonsoft.Json.xml
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Debug\SharpFireStarter.csprojAssemblyReference.cache
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Debug\SharpFireStarter.csproj.CoreCompileInputs.cache
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Debug\SharpFireStarter.csproj.CopyComplete
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Debug\SharpFireStarter.dll
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Debug\SharpFireStarter.pdb
