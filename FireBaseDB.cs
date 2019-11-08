@@ -24,7 +24,7 @@ namespace SharpFireStarter
             if (!Uri.IsWellFormedUriString(appID, UriKind.RelativeOrAbsolute))
                 throw new UriFormatException("The given AppID URL Structure is not valid");
 
-            this.appID = appURL + "/" + appID;
+            this.appID = appURL + "/" + appID + "/";
             this.webAPIKey = webAPIKey;
 
             Logger.Log("Initialized with AppID " + appID);
@@ -91,9 +91,9 @@ namespace SharpFireStarter
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<string> GetFromDB(string data)
+        public string GetFromDB(string data)
         {
-            string getData = await Activity.Get.GetFromDB(appID, data, oAuthToken);
+            string getData = Activity.Get.GetFromDB(appID, data, oAuthToken);
             return getData;
         }
     }

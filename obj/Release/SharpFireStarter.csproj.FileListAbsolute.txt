@@ -1,0 +1,8 @@
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Release\SharpFireStarter.csproj.CoreCompileInputs.cache
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\bin\Release\SharpFireStarter.dll
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\bin\Release\SharpFireStarter.pdb
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\bin\Release\Newtonsoft.Json.dll
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\bin\Release\Newtonsoft.Json.xml
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Release\SharpFireStarter.csproj.CopyComplete
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Release\SharpFireStarter.dll
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Release\SharpFireStarter.pdb

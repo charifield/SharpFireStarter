@@ -10,49 +10,27 @@ namespace SharpFireStarter.Activity
 {
     public class Get
     {
-        public static Task<string> GetFromDB(string appID, string node, string oAuth)
+        public static string GetFromDB(string appID, string node, string oAuth)
         {
-            string endpoint = string.Format("{0}/{1}.json?auth={2}", appID, node, oAuth);
-            //string endpoint = string.Format("{0}/{1}.json", appID, node);
+            string url = string.Format("{0}/{1}.json?auth={2}", appID, node, oAuth);
+            var req = (HttpWebRequest)WebRequest.Create(url);
+            //req.Credentials = new NetworkCredential(_bcApiUserName, _bcApiUserPassword);
+            req.ContentType = "application/json";
+            req.Accept = "application/json";
 
+            req.Method = "GET";
 
-            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(endpoint);
-            httpWebRequest.ContentType = "application/json; charset=utf-8";
-            //httpWebRequest.ContentType = "application/json-patch+json; charset=utf-8";
-            httpWebRequest.Method = "GET";
-            //httpWebRequest.Headers.Add("Authorization", "Bearer " + oAuth);
-
-            try
+            var response = req.GetResponse();
+            string responseBody = "";
+            using (var reader = new System.IO.StreamReader(response.GetResponseStream()))
             {
-                using (var response = httpWebRequest.GetResponse() as HttpWebResponse)
-                {
-                    if (httpWebRequest.HaveResponse && response != null)
-                    {
-                        using (var reader = new StreamReader(response.GetResponseStream()))
-                        {
-                            var result = reader.ReadToEnd();
-                            Logger.Log(result);
-                            return Task.FromResult(result);
-                        }
-                    }
-                }
+                responseBody = reader.ReadToEnd();
             }
-            catch (WebException e)
-            {
-                if (e.Response != null)
-                {
-                    using (var errorResponse = (HttpWebResponse)e.Response)
-                    {
-                        using (var reader = new StreamReader(errorResponse.GetResponseStream()))
-                        {
-                            string error = reader.ReadToEnd();
-                            Logger.Log(error);
-                        }
-                    }
 
-                }
-            }
-            return Task.FromResult(string.Empty);
+
+            return responseBody;
+
+
         }
     }
 }
