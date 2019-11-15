@@ -80,7 +80,15 @@ namespace SharpFireStarter
         /// <param name="data"></param>
         public bool WriteToDB(string node, object data)
         {
-            Activity.Set.WriteToDB(appID, node, oAuthToken, data);
+            try
+            {
+                Activity.Set.WriteToDB(appID, node, oAuthToken, data);
+            } 
+            catch(Exception ex)
+            {
+                Console.WriteLine("Write to DB Failed: " + ex.Message);
+                return false;
+            }
             return true;
         }
 
@@ -94,6 +102,9 @@ namespace SharpFireStarter
         public string GetFromDB(string data)
         {
             string getData = Activity.Get.GetFromDB(appID, data, oAuthToken);
+            if (getData == "")
+                return null;
+
             return getData;
         }
     }
