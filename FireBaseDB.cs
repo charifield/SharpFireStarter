@@ -102,7 +102,7 @@ namespace SharpFireStarter
         public string GetFromDB(string data)
         {
             string getData = Activity.Get.GetFromDB(appID, data, oAuthToken);
-            if (getData == "")
+            if (getData == "" || getData.ToLower() == "null")
                 return null;
 
             return getData;

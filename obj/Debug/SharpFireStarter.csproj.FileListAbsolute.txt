@@ -64,8 +64,8 @@ C:\PersonalProjects\SharpFireStarter\SharpFireStarter\bin\Debug\System.Web.Razor
 C:\PersonalProjects\SharpFireStarter\SharpFireStarter\bin\Debug\System.Web.WebPages.xml
 C:\PersonalProjects\SharpFireStarter\SharpFireStarter\bin\Debug\System.Web.WebPages.Deployment.xml
 C:\PersonalProjects\SharpFireStarter\SharpFireStarter\bin\Debug\System.Web.WebPages.Razor.xml
+C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Debug\SharpFireStarter.csprojAssemblyReference.cache
 C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Debug\SharpFireStarter.csproj.CoreCompileInputs.cache
 C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Debug\SharpFireStarter.csproj.CopyComplete
 C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Debug\SharpFireStarter.dll
 C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Debug\SharpFireStarter.pdb
-C:\PersonalProjects\SharpFireStarter\SharpFireStarter\obj\Debug\SharpFireStarter.csprojAssemblyReference.cache
