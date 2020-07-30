@@ -101,11 +101,18 @@ namespace SharpFireStarter
         /// <returns></returns>
         public string GetFromDB(string data)
         {
-            string getData = Activity.Get.GetFromDB(appID, data, oAuthToken);
-            if (getData == "" || getData.ToLower() == "null")
-                return null;
+            try
+            {
+                string getData = Activity.Get.GetFromDB(appID, data, oAuthToken);
+                if (getData == "" || getData.ToLower() == "null")
+                    return null;
 
-            return getData;
+                return getData;
+            } catch (Exception ex)
+            {
+                Logger.Log(ex.Message);
+                return null;
+            }
         }
     }
 }
