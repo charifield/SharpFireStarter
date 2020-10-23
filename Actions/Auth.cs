@@ -19,7 +19,8 @@ namespace SharpFireStarter.Activity
 
 
         private static readonly string authEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=";
-        private static readonly string signOutEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signOutUser";
+        private static readonly string signUpEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=";
+        private static readonly string signOutEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signOutUser?key=";
 
         /// <summary>
         /// Get oAuth Token
@@ -42,7 +43,8 @@ namespace SharpFireStarter.Activity
                 {
                     {"email", email },
                     {"password", password },
-                    {"returnSecureToken", "true" }
+                    {"returnSecureToken", "true" },
+                    {"instanceId", Guid.NewGuid().ToString() }
                 };
 
                 var content = new FormUrlEncodedContent(values);
@@ -54,10 +56,63 @@ namespace SharpFireStarter.Activity
                 if (responseString.Result != null && responseString.Result != "")
                 {
                     var userObject = JsonConvert.DeserializeObject<User>(responseString.Result);
+                    userObject.instanceId = values["instanceId"];
                     return userObject;
                 }
                 else
                     throw new UnauthorizedAccessException("Failed to obtain Token. Check Credentials");
+            }
+            catch (Exception ex)
+            {
+                Log(ex.Message);
+                return null;
+            }
+            finally
+            {
+                client.CancelPendingRequests();
+                client.Dispose();
+                Log("Client Connection Closed");
+            }
+        }
+
+        public static User SignUp(string name, string email, string password, string webAPIKey)
+        {
+            if (name == null)
+                return null;
+            if (email == null)
+                return null;
+            if (password == null)
+                return null;
+
+            Log(string.Format("Begin Sign Up for {0}...", email));
+            var client = new HttpClient();
+
+
+            var taskResult = new TaskCompletionSource<string>();
+            taskResult.SetResult("");
+
+            try
+            {
+                var values = new Dictionary<string, string>
+                {
+                    {"displayName", name },
+                    {"email", email },
+                    {"password", password }
+                };
+
+                var content = new FormUrlEncodedContent(values);
+                var response = client.PostAsync(signUpEndPoint + webAPIKey, content);
+                response.Wait();
+                var responseString = response.Result.Content.ReadAsStringAsync();
+                responseString.Wait();
+
+                if (responseString.Result != null && responseString.Result != "")
+                {
+                    var userObject = JsonConvert.DeserializeObject<User>(responseString.Result);
+                    return userObject;
+                }
+                else
+                    throw new UnauthorizedAccessException("Failed to sign up user");
             }
             catch (Exception ex)
             {
@@ -88,7 +143,7 @@ namespace SharpFireStarter.Activity
                 };
 
                     var content = new FormUrlEncodedContent(values);
-                    var response = client.PostAsync(signOutEndPoint, content);
+                    var response = client.PostAsync(signOutEndPoint + webAPIKey, content);
                     response.Wait();
                     var responseString = response.Result.Content.ReadAsStringAsync();
                     responseString.Wait();

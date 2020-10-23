@@ -40,23 +40,23 @@ namespace SharpFireStarter
         /// <param name="email"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public bool Authenticate(string email, string password)
+        public User Authenticate(string email, string password)
         {
             //Validate Request
             if (email == string.Empty)
             {
                 Logger.Log("Email for Auth not provided.");
-                return false;
+                return null;
             }
             else if (password == string.Empty)
             {
                 Logger.Log("Password for Auth not provided.");
-                return false;
+                return null;
             }
             else if (webAPIKey == string.Empty)
             {
                 Logger.Log("WebAPI Key for Auth not provided.");
-                return false;
+                return null;
             }
 
             User user = Activity.Auth.Authenticate(email, password, webAPIKey);
@@ -66,14 +66,23 @@ namespace SharpFireStarter
                 currentUser = user;
                 oAuthToken = user.idToken;
                 Logger.Log("oAuth Token Received: " + oAuthToken);
-                return true;
+                return user;
             }
             else
             {
                 Logger.Log("Failed to Authenticate. Check your Username and Password.");
-                return false;
+                return null;
             }
             
+        }
+
+        public User SignUp(string name, string email, string password)
+        {
+            var newUser = Auth.SignUp(name, email, password, webAPIKey);
+            if (newUser != null)
+                return newUser;
+            else
+                return null;
         }
 
         public bool SignOut()
