@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -13,7 +14,12 @@ namespace SharpFireStarter.Activity
 {
     public static class Auth
     {
+        //ResourceScope : https://developers.google.com/resources/api-libraries/documentation/identitytoolkit/v3/python/latest/identitytoolkit_v3.relyingparty.html
+        //Second resource : https://any-api.com/googleapis_com/identitytoolkit/docs/relyingparty/identitytoolkit_relyingparty_signOutUser
+
+
         private static readonly string authEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=";
+        private static readonly string signOutEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signOutUser";
 
         /// <summary>
         /// Get oAuth Token
@@ -21,7 +27,7 @@ namespace SharpFireStarter.Activity
         /// <param name="email"></param>
         /// <param name="password"></param>
         //public static Task<string> Authenticate(string email, string password, string webAPIKey)
-        public static string Authenticate(string email, string password, string webAPIKey)
+        public static User Authenticate(string email, string password, string webAPIKey)
         {
             Log(string.Format("Begin Authentication for {0}...", email));
             var client = new HttpClient();
@@ -34,7 +40,7 @@ namespace SharpFireStarter.Activity
             {
                 var values = new Dictionary<string, string>
                 {
-                    { "email", email },
+                    {"email", email },
                     {"password", password },
                     {"returnSecureToken", "true" }
                 };
@@ -47,8 +53,8 @@ namespace SharpFireStarter.Activity
 
                 if (responseString.Result != null && responseString.Result != "")
                 {
-                    var objects = JObject.Parse(responseString.Result);
-                    return objects["idToken"].ToString();
+                    var userObject = JsonConvert.DeserializeObject<User>(responseString.Result);
+                    return userObject;
                 }
                 else
                     throw new UnauthorizedAccessException("Failed to obtain Token. Check Credentials");
@@ -56,7 +62,7 @@ namespace SharpFireStarter.Activity
             catch (Exception ex)
             {
                 Log(ex.Message);
-                return "";
+                return null;
             }
             finally
             {
@@ -64,6 +70,50 @@ namespace SharpFireStarter.Activity
                 client.Dispose();
                 Log("Client Connection Closed");
             }
+        }
+
+        public static User SignOut(User user, string webAPIKey)
+        {
+            if (user.localId != null)
+            {
+                Log(string.Format("Begin Sign Out for {0}...", user.email));
+                var client = new HttpClient();
+
+                try
+                {
+                    var values = new Dictionary<string, string>
+                {
+                    {"instanceId", user.instanceId },
+                    {"localId", user.localId }
+                };
+
+                    var content = new FormUrlEncodedContent(values);
+                    var response = client.PostAsync(signOutEndPoint, content);
+                    response.Wait();
+                    var responseString = response.Result.Content.ReadAsStringAsync();
+                    responseString.Wait();
+
+                    if (responseString.Result != null && responseString.Result != "")
+                    {
+                        var userObject = JsonConvert.DeserializeObject<User>(responseString.Result);
+                        return userObject;
+                    }
+                    else
+                        throw new UnauthorizedAccessException("Failed to obtain Token. Check Credentials");
+                }
+                catch (Exception ex)
+                {
+                    Log(ex.Message);
+                    return null;
+                }
+                finally
+                {
+                    client.CancelPendingRequests();
+                    client.Dispose();
+                    Log("Client Connection Closed");
+                }
+            }
+            return null;
         }
 
 

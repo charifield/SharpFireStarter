@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpFireStarter.Activity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ namespace SharpFireStarter
         private string appID { get; set; }
         private string webAPIKey { get; set; }
         private string oAuthToken { get; set; }
+        private User currentUser { get; set; }
 
 
         /// <summary>
@@ -57,11 +59,12 @@ namespace SharpFireStarter
                 return false;
             }
 
-            string value = Activity.Auth.Authenticate(email, password, webAPIKey);
+            User user = Activity.Auth.Authenticate(email, password, webAPIKey);
 
-            if (value != string.Empty && value != "")
+            if (user != null)
             {
-                oAuthToken = value;
+                currentUser = user;
+                oAuthToken = user.idToken;
                 Logger.Log("oAuth Token Received: " + oAuthToken);
                 return true;
             }
@@ -71,6 +74,17 @@ namespace SharpFireStarter
                 return false;
             }
             
+        }
+
+        public bool SignOut()
+        {
+            if(currentUser != null)
+            {
+                Auth.SignOut(currentUser, webAPIKey);
+                return true;
+            }
+
+            return false;
         }
 
 
