@@ -78,6 +78,14 @@ namespace SharpFireStarter.Activity
             }
         }
 
+        /// <summary>
+        /// Sign Up New User Account
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <param name="webAPIKey"></param>
+        /// <returns></returns>
         public static User SignUp(string name, string email, string password, string webAPIKey)
         {
             if (name == null)
@@ -131,6 +139,12 @@ namespace SharpFireStarter.Activity
             }
         }
 
+        /// <summary>
+        /// Sign Out Current User
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="webAPIKey"></param>
+        /// <returns></returns>
         public static User SignOut(User user, string webAPIKey)
         {
             if (user.localId != null)
@@ -175,6 +189,12 @@ namespace SharpFireStarter.Activity
             return null;
         }
 
+        /// <summary>
+        /// Refresh Auth Token and retrieve userID
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="webAPIKey"></param>
+        /// <returns></returns>
         public static RefreshToken RefreshAuthToken(ref User user, string webAPIKey)
         {
             var client = new HttpClient();
@@ -203,7 +223,6 @@ namespace SharpFireStarter.Activity
 
             return null;
         }
-
 
         /// <summary>
         /// Log Out Messages to Console
