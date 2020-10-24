@@ -19,6 +19,8 @@ namespace SharpFireStarter.Activity
 
 
         private static readonly string authEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=";
+        private static readonly string authRefreshTokenEndPoint = "https://securetoken.googleapis.com/v1/token?key=";
+
         private static readonly string signUpEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=";
         private static readonly string signOutEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signOutUser?key=";
 
@@ -39,7 +41,7 @@ namespace SharpFireStarter.Activity
 
             try
             {
-                var values = new Dictionary<string, string>
+                var authValues = new Dictionary<string, string>
                 {
                     {"email", email },
                     {"password", password },
@@ -47,7 +49,7 @@ namespace SharpFireStarter.Activity
                     {"instanceId", Guid.NewGuid().ToString() }
                 };
 
-                var content = new FormUrlEncodedContent(values);
+                var content = new FormUrlEncodedContent(authValues);
                 var response = client.PostAsync(authEndPoint + webAPIKey, content);
                 response.Wait();
                 var responseString = response.Result.Content.ReadAsStringAsync();
@@ -56,7 +58,12 @@ namespace SharpFireStarter.Activity
                 if (responseString.Result != null && responseString.Result != "")
                 {
                     var userObject = JsonConvert.DeserializeObject<User>(responseString.Result);
-                    userObject.instanceId = values["instanceId"];
+                    userObject.instanceId = authValues["instanceId"];
+
+                    //Get User ID
+                    var newToken = RefreshAuthToken(userObject, webAPIKey);
+                    userObject.userID = newToken.user_id;
+                    userObject.refreshToken = newToken.refresh_token;
                     return userObject;
                 }
                 else
@@ -168,6 +175,32 @@ namespace SharpFireStarter.Activity
                     Log("Client Connection Closed");
                 }
             }
+            return null;
+        }
+
+        public static RefreshToken RefreshAuthToken(User user, string webAPIKey)
+        {
+            var client = new HttpClient();
+
+            //Get User ID
+            var refreshValues = new Dictionary<string, string>
+            {
+                {"grant_type", "refresh_token" },
+                {"refresh_token", user.refreshToken }
+            };
+
+            var content = new FormUrlEncodedContent(refreshValues);
+            var response = client.PostAsync(authRefreshTokenEndPoint + webAPIKey, content);
+            response.Wait();
+            var responseString = response.Result.Content.ReadAsStringAsync();
+            responseString.Wait();
+
+            if (responseString.Result != null && responseString.Result != "")
+            {
+                var tokenResponse = JsonConvert.DeserializeObject<RefreshToken>(responseString.Result);
+                return tokenResponse;;
+            }
+
             return null;
         }
 

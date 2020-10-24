@@ -11,22 +11,23 @@ namespace SharpFireStarter
     public class FireBaseDB
     {
         //Stored Variables
-        private string appID { get; set; }
+
+        private string databaseURL { get; set; }
         private string webAPIKey { get; set; }
         private string oAuthToken { get; set; }
-        private User currentUser { get; set; }
+        public User currentUser { get; set; }
 
 
         /// <summary>
         /// Initialize FirebaseConnector with AppID and WebAPI Key (Found on your Firebase Console Online)
         /// </summary>
         /// <param name="appID"></param>
-        public FireBaseDB(string appURL, string appID, string webAPIKey)
+        public FireBaseDB(string appID, string databaseURL, string webAPIKey)
         {
             if (!Uri.IsWellFormedUriString(appID, UriKind.RelativeOrAbsolute))
                 throw new UriFormatException("The given AppID URL Structure is not valid");
 
-            this.appID = appURL + "/" + appID + "/";
+            this.databaseURL = databaseURL;
             this.webAPIKey = webAPIKey;
 
             Logger.Log("Initialized with AppID " + appID);
@@ -105,7 +106,7 @@ namespace SharpFireStarter
         {
             try
             {
-                Activity.Set.WriteToDB(appID, node, oAuthToken, data);
+                Activity.Set.WriteToDB(databaseURL, node, oAuthToken, data);
             } 
             catch(Exception ex)
             {
@@ -126,7 +127,7 @@ namespace SharpFireStarter
         {
             try
             {
-                string getData = Activity.Get.GetFromDB(appID, data, oAuthToken);
+                string getData = Activity.Get.GetFromDB(databaseURL, data, oAuthToken);
                 if (getData == "" || getData.ToLower() == "null")
                     return null;
 

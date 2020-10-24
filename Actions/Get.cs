@@ -10,9 +10,9 @@ namespace SharpFireStarter.Activity
 {
     public class Get
     {
-        public static string GetFromDB(string appID, string node, string oAuth)
+        public static string GetFromDB(string databaseURL, string node, string oAuth)
         {
-            string url = string.Format("{0}/{1}.json?auth={2}", appID, node, oAuth);
+            string url = string.Format("{0}/{1}.json?auth={2}", databaseURL, node, oAuth);
             var req = (HttpWebRequest)WebRequest.Create(url);
             //req.Credentials = new NetworkCredential(_bcApiUserName, _bcApiUserPassword);
             req.ContentType = "application/json";
@@ -29,8 +29,6 @@ namespace SharpFireStarter.Activity
 
 
             return responseBody;
-
-
         }
     }
 }
