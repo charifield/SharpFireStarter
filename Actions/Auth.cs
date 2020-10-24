@@ -61,9 +61,7 @@ namespace SharpFireStarter.Activity
                     userObject.instanceId = authValues["instanceId"];
 
                     //Get User ID
-                    var newToken = RefreshAuthToken(userObject, webAPIKey);
-                    userObject.userID = newToken.user_id;
-                    userObject.refreshToken = newToken.refresh_token;
+                    var newToken = RefreshAuthToken(ref userObject, webAPIKey);
                     return userObject;
                 }
                 else
@@ -116,6 +114,8 @@ namespace SharpFireStarter.Activity
                 if (responseString.Result != null && responseString.Result != "")
                 {
                     var userObject = JsonConvert.DeserializeObject<User>(responseString.Result);
+                    var refreshToken = RefreshAuthToken(ref userObject, webAPIKey);
+
                     return userObject;
                 }
                 else
@@ -178,7 +178,7 @@ namespace SharpFireStarter.Activity
             return null;
         }
 
-        public static RefreshToken RefreshAuthToken(User user, string webAPIKey)
+        public static RefreshToken RefreshAuthToken(ref User user, string webAPIKey)
         {
             var client = new HttpClient();
 
@@ -198,6 +198,9 @@ namespace SharpFireStarter.Activity
             if (responseString.Result != null && responseString.Result != "")
             {
                 var tokenResponse = JsonConvert.DeserializeObject<RefreshToken>(responseString.Result);
+                user.refreshToken = tokenResponse.refresh_token;
+                user.userID = tokenResponse.user_id;
+                user.idToken = tokenResponse.id_token;
                 return tokenResponse;;
             }
 
