@@ -34,8 +34,6 @@ namespace SharpFireStarter.Activity
         {
             Log(string.Format("Begin Authentication for {0}...", email));
             var client = new HttpClient();
-
-
             var taskResult = new TaskCompletionSource<string>();
             taskResult.SetResult("");
 
@@ -115,7 +113,6 @@ namespace SharpFireStarter.Activity
                 {
                     var userObject = JsonConvert.DeserializeObject<User>(responseString.Result);
                     var refreshToken = RefreshAuthToken(ref userObject, webAPIKey);
-
                     return userObject;
                 }
                 else

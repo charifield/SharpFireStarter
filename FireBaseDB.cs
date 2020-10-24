@@ -81,7 +81,12 @@ namespace SharpFireStarter
         {
             var newUser = Auth.SignUp(name, email, password, webAPIKey);
             if (newUser != null)
+            {
+                currentUser = newUser;
+                oAuthToken = newUser.idToken;
                 return newUser;
+            }
+                
             else
                 return null;
         }

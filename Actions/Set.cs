@@ -18,11 +18,11 @@ namespace SharpFireStarter.Activity
 
             if (oAuth != "")
             {
-                endpoint = string.Format("{0}/{1}/.json?auth={2}", appID, node, oAuth);
+                endpoint = string.Format("{0}/{1}.json?auth={2}", appID, node, oAuth);
             }
             else
             {
-                endpoint = string.Format("{0}/{1}/.json", appID, node);
+                endpoint = string.Format("{0}/{1}.json", appID, node);
             }
 
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(endpoint);
