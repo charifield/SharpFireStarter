@@ -82,6 +82,12 @@ var userObject = db.SignUp(name, email, password);
 db.SignOut();
 ```
 
+### Change User Password
+```csharp
+//Changes the password of signed in users
+var userObject = ChangePassword(email, oldpassword, newpassword);
+```
+
 ### Get Data
 ```csharp
 //Get Data from Firebase DB as JSON

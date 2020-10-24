@@ -58,7 +58,7 @@ namespace SharpFireStarter
                 return null;
             }
 
-            User user = Activity.Auth.Authenticate(email, password, webAPIKey);
+            User user = Activity.Auth.Authenticate(email.Trim(), password.Trim(), webAPIKey);
 
             if (user != null)
             {
@@ -75,6 +75,41 @@ namespace SharpFireStarter
             
         }
 
+        public User ChangePassword(string email, string oldpassword, string newpassword)
+        {
+            //Validate Request
+            if (email == string.Empty)
+            {
+                Logger.Log("Email for Auth not provided.");
+                return null;
+            }
+            else if (oldpassword == string.Empty)
+            {
+                Logger.Log("Old Password for Auth not provided.");
+                return null;
+            }
+            else if (newpassword == string.Empty)
+            {
+                Logger.Log("New Password for Auth not provided.");
+                return null;
+            }
+
+            User user = Activity.Auth.Authenticate(email.Trim(), oldpassword.Trim(), webAPIKey);
+
+            if (user != null)
+            {
+                User userChangedPassword = Activity.Auth.ChangePassword(ref user, email.Trim(), oldpassword.Trim(), newpassword.Trim(), webAPIKey);
+                Logger.Log("Password has been changed");
+                return user;
+            }
+            else
+            {
+                Logger.Log("Failed to Authenticate. Check your old Username and Password.");
+                return null;
+            }
+
+        }
+
         /// <summary>
         /// Sign up new user
         /// </summary>
@@ -84,7 +119,7 @@ namespace SharpFireStarter
         /// <returns></returns>
         public User SignUp(string name, string email, string password)
         {
-            var newUser = Auth.SignUp(name, email, password, webAPIKey);
+            var newUser = Auth.SignUp(name, email.Trim(), password.Trim(), webAPIKey);
             if (newUser != null)
             {
                 currentUser = newUser;

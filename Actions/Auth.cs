@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SharpFireStarter.Models;
 
 namespace SharpFireStarter.Activity
 {
@@ -23,6 +24,7 @@ namespace SharpFireStarter.Activity
 
         private static readonly string signUpEndPoint = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=";
         private static readonly string signOutEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signOutUser?key=";
+        private static readonly string passwordResetEndPoint = "https://identitytoolkit.googleapis.com/v1/accounts:update?key=";
 
         /// <summary>
         /// Get oAuth Token
@@ -76,6 +78,42 @@ namespace SharpFireStarter.Activity
                 client.Dispose();
                 Log("Client Connection Closed");
             }
+        }
+
+        /// <summary>
+        /// Change user password
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="oldPassword"></param>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
+        public static User ChangePassword(ref User user, string email, string oldPassword, string newPassword, string webAPIKey)
+        {
+            var client = new HttpClient();
+
+            var payload = new Dictionary<string, string>
+                {
+                    { "idToken" , user.idToken},
+                    { "password" , newPassword },
+                    { "returnSecureToken" , "true" }
+                };
+
+            var content = new FormUrlEncodedContent(payload);
+            var response = client.PostAsync(passwordResetEndPoint + webAPIKey, content);
+            response.Wait();
+            var responseString = response.Result.Content.ReadAsStringAsync();
+            responseString.Wait();
+
+            if (responseString.Result != null && responseString.Result != "")
+            {
+                var resetPasswordResponse = JsonConvert.DeserializeObject<ResetPassword>(responseString.Result);
+                user.refreshToken = resetPasswordResponse.refreshToken;
+                user.idToken = resetPasswordResponse.idToken;
+                return user;
+            }
+
+            throw new Exception("Password Reset Failed. Try again");
+
         }
 
         /// <summary>
@@ -218,7 +256,7 @@ namespace SharpFireStarter.Activity
                 user.refreshToken = tokenResponse.refresh_token;
                 user.userID = tokenResponse.user_id;
                 user.idToken = tokenResponse.id_token;
-                return tokenResponse;;
+                return tokenResponse; ;
             }
 
             return null;
