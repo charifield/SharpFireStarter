@@ -14,14 +14,14 @@ namespace SharpFireStarter.Activity
 {
     public static class Auth
     {
-        //ResourceScope : https://developers.google.com/resources/api-libraries/documentation/identitytoolkit/v3/python/latest/identitytoolkit_v3.relyingparty.html
+        //ResourceScope : https://firebase.google.com/docs/reference/rest/auth#section-create-email-password
         //Second resource : https://any-api.com/googleapis_com/identitytoolkit/docs/relyingparty/identitytoolkit_relyingparty_signOutUser
 
 
-        private static readonly string authEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=";
+        private static readonly string authEndPoint = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=";
         private static readonly string authRefreshTokenEndPoint = "https://securetoken.googleapis.com/v1/token?key=";
 
-        private static readonly string signUpEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=";
+        private static readonly string signUpEndPoint = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=";
         private static readonly string signOutEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signOutUser?key=";
 
         /// <summary>
