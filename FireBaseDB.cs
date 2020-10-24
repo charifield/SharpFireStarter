@@ -33,8 +33,6 @@ namespace SharpFireStarter
             Logger.Log("Initialized with AppID " + appID);
         }
 
-
-
         /// <summary>
         /// Authenticate user and Obtain oAuth Token
         /// </summary>
@@ -77,6 +75,13 @@ namespace SharpFireStarter
             
         }
 
+        /// <summary>
+        /// Sign up new user
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public User SignUp(string name, string email, string password)
         {
             var newUser = Auth.SignUp(name, email, password, webAPIKey);
@@ -91,6 +96,10 @@ namespace SharpFireStarter
                 return null;
         }
 
+        /// <summary>
+        /// Sign Out Logged In Account
+        /// </summary>
+        /// <returns></returns>
         public bool SignOut()
         {
             if(currentUser != null)
@@ -101,7 +110,6 @@ namespace SharpFireStarter
 
             return false;
         }
-
 
         /// <summary>
         /// Write to the Firebase DB
@@ -120,8 +128,6 @@ namespace SharpFireStarter
             }
             return true;
         }
-
-
 
         /// <summary>
         /// Get Data from the Firebasse DB

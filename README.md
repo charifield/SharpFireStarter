@@ -2,7 +2,7 @@
 
 ![Price](https://img.shields.io/badge/price-free-blue.svg) &nbsp; ![Building](https://img.shields.io/badge/build-passing-brightgreen.svg) &nbsp; ![Author](https://img.shields.io/badge/author-field%20chari-orange.svg) &nbsp; ![Version](https://img.shields.io/badge/version-ALPHA-blue.svg) 
 
-A Light Weight .NET Framework Wrapper for Rest calls API for the Firebase RealTime Database! Somebody had to do it :)
+A Light Weight and easy to use .NET Standard Wrapper for Rest calls API for the Firebase RealTime Database! Somebody had to do it :)
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
@@ -23,41 +23,69 @@ A computer
 
 ## Supported Frameworks
 ```
- .NET Framework 4.5.2
+ .NET Framework 4.5.0+
+ .NET Core 2.0+
+ .NET Standard 2.0+
+```
+
+## Dependencies
+```
+ Newtonsoft.Json
 ```
 
 ## Todos &nbsp; ![ToDos](https://img.shields.io/badge/completion-80%25-orange.svg)
  - Add project to Nuget Repo
  - Better Error Handling
  - Add Delete Data Functionality
- - Lower .Net Version Target
 
 ## Usage
+
+### User Object
+```csharp
+public string userID { get; set; }
+public string email { get; set; }
+public string displayName { get; set; }
+public string oauthAccessToken { get; set; }
+public string photoUrl { get; set; }
+public float oauthExpireIn { get; set; }
+public bool registered { get; set; }
+public string idToken { get; set; }
+public string refreshToken { get; set; }
+public string localId { get; set; }
+public string instanceId { get; set; }
+```
+
 ### Instantiate
 ```csharp
 //Init Database Connection
 //Get your appID from the Firebase Console
+//Get your database URL from the Firebase Console
 //Get your apiKey from the Firebase Console
-SharpFireStarter.FireBaseDB db = new SharpFireStarter.FireBaseDB(appID, apiKey);
+SharpFireStarter.FireBaseDB db = new SharpFireStarter.FireBaseDB(appID, databaseURL apiKey);
 ```
 
 ### Authenticate
 ```csharp
-//Authenticate with Firebase DB
-if(db.Authenticate(authUserName, authUserPass))
-{
-   //Successfully authenticated
-}
+//Authenticate with Firebase DB. Returns a user object
+var userObject = db.Authenticate(email, password);
+```
+
+### Sign Up New User
+```csharp
+//Create a new firebase user and returns a user object
+var userObject = db.SignUp(name, email, password);
+```
+
+### Sign Out Logged In User
+```csharp
+//Signs out any signed in users
+db.SignOut();
 ```
 
 ### Get Data
 ```csharp
-//Get Data from Firebase DB
-string data = await db.GetFromDB("firebase/path/to/yourdata");
-if(data != null)
-{
-    //Data retrieved successfully
-}
+//Get Data from Firebase DB as JSON
+string data = db.GetFromDB("firebase/path/to/yourdata");
 ```
 
 ### Write Data
