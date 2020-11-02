@@ -1,8 +1,8 @@
 C:\Personal Projects\SharpFireStarter\bin\Debug\netstandard2.0\SharpFireStarter.deps.json
 C:\Personal Projects\SharpFireStarter\bin\Debug\netstandard2.0\SharpFireStarter.dll
+C:\Personal Projects\SharpFireStarter\bin\Debug\netstandard2.0\SharpFireStarter.pdb
 C:\Personal Projects\SharpFireStarter\obj\Debug\netstandard2.0\SharpFireStarter.AssemblyInfoInputs.cache
 C:\Personal Projects\SharpFireStarter\obj\Debug\netstandard2.0\SharpFireStarter.AssemblyInfo.cs
 C:\Personal Projects\SharpFireStarter\obj\Debug\netstandard2.0\SharpFireStarter.csproj.CoreCompileInputs.cache
-C:\Personal Projects\SharpFireStarter\bin\Debug\netstandard2.0\SharpFireStarter.pdb
 C:\Personal Projects\SharpFireStarter\obj\Debug\netstandard2.0\SharpFireStarter.dll
 C:\Personal Projects\SharpFireStarter\obj\Debug\netstandard2.0\SharpFireStarter.pdb

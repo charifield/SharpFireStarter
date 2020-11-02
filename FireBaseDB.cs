@@ -110,6 +110,30 @@ namespace SharpFireStarter
 
         }
 
+        public bool SendPasswordResetEmail(string email)
+        {
+            //Validate Request
+            if (email == string.Empty)
+            {
+                Logger.Log("Email for Auth not provided.");
+                return false;
+            }
+
+            bool sendResetEamil = Activity.Auth.ResetPassword(email.Trim(), webAPIKey);
+
+            if (sendResetEamil == true)
+            {
+                Logger.Log("Password reset email has been sent");
+                return sendResetEamil;
+            }
+            else
+            {
+                Logger.Log("Failed to Send Email Reset Password. Check your email address.");
+                return sendResetEamil;
+            }
+
+        }
+
         /// <summary>
         /// Sign up new user
         /// </summary>

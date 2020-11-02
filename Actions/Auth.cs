@@ -24,7 +24,9 @@ namespace SharpFireStarter.Activity
 
         private static readonly string signUpEndPoint = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=";
         private static readonly string signOutEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signOutUser?key=";
-        private static readonly string passwordResetEndPoint = "https://identitytoolkit.googleapis.com/v1/accounts:update?key=";
+        private static readonly string changePasswordEndPoint = "https://identitytoolkit.googleapis.com/v1/accounts:update?key=";
+
+        private static readonly string resetPasswordEndPoint = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=";
 
         /// <summary>
         /// Get oAuth Token
@@ -99,7 +101,7 @@ namespace SharpFireStarter.Activity
                 };
 
             var content = new FormUrlEncodedContent(payload);
-            var response = client.PostAsync(passwordResetEndPoint + webAPIKey, content);
+            var response = client.PostAsync(changePasswordEndPoint + webAPIKey, content);
             response.Wait();
             var responseString = response.Result.Content.ReadAsStringAsync();
             responseString.Wait();
@@ -110,6 +112,37 @@ namespace SharpFireStarter.Activity
                 user.refreshToken = resetPasswordResponse.refreshToken;
                 user.idToken = resetPasswordResponse.idToken;
                 return user;
+            }
+
+            throw new Exception("Password Reset Failed. Try again");
+
+        }
+
+
+        public static bool ResetPassword(string email, string webAPIKey)
+        {
+            var client = new HttpClient();
+
+            var payload = new Dictionary<string, string>
+                {
+                    { "requestType" , "PASSWORD_RESET"},
+                    { "email" , email }
+                };
+
+            var content = new FormUrlEncodedContent(payload);
+            var response = client.PostAsync(resetPasswordEndPoint + webAPIKey, content);
+            response.Wait();
+            var responseString = response.Result.Content.ReadAsStringAsync();
+            responseString.Wait();
+
+            if (responseString.Result != null && responseString.Result != "")
+            {
+                if (responseString.Result.Contains("error"))
+                    return false;
+
+                var resetPasswordResponse = JsonConvert.DeserializeObject<ResetPassword>(responseString.Result);
+                Console.WriteLine(resetPasswordResponse);
+                return true;
             }
 
             throw new Exception("Password Reset Failed. Try again");
