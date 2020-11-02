@@ -27,6 +27,8 @@ namespace SharpFireStarter.Activity
         private static readonly string changePasswordEndPoint = "https://identitytoolkit.googleapis.com/v1/accounts:update?key=";
 
         private static readonly string resetPasswordEndPoint = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=";
+        private static readonly string verifyResetPasswordEndPoint = "https://identitytoolkit.googleapis.com/v1/accounts:resetPassword?key=";
+
 
         /// <summary>
         /// Get oAuth Token
@@ -119,6 +121,50 @@ namespace SharpFireStarter.Activity
         }
 
 
+        /// <summary>
+        /// Change user password using OOBCode
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="oldPassword"></param>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
+        public static string ChangePasswordWithOOBCode(string code, string newPassword, string webAPIKey)
+        {
+            var client = new HttpClient();
+
+            var payload = new Dictionary<string, string>
+                {
+                    { "oobCode" , code},
+                    { "newPassword" , newPassword }
+                };
+
+            var content = new FormUrlEncodedContent(payload);
+            var response = client.PostAsync(verifyResetPasswordEndPoint + webAPIKey, content);
+            response.Wait();
+            var responseString = response.Result.Content.ReadAsStringAsync();
+            responseString.Wait();
+
+            if (responseString.Result != null && responseString.Result != "")
+            {
+                if (responseString.Result.Contains("NOT_ALLOWED") || responseString.Result.Contains("INVALID") || responseString.Result.Contains("EXPIRED") || responseString.Result.Contains("DISABLED"))
+                    return "expired";
+
+                var resetPasswordResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseString.Result);
+                Console.WriteLine(resetPasswordResponse["email"].ToString());
+                return resetPasswordResponse["email"].ToString();
+            }
+
+            throw new Exception("Password Reset Failed. Try again");
+
+        }
+
+
+        /// <summary>
+        /// Send user a reset password link
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="webAPIKey"></param>
+        /// <returns></returns>
         public static bool ResetPassword(string email, string webAPIKey)
         {
             var client = new HttpClient();
@@ -147,6 +193,41 @@ namespace SharpFireStarter.Activity
 
             throw new Exception("Password Reset Failed. Try again");
 
+        }
+
+
+        /// <summary>
+        /// Verify the password reset code
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="webAPIKey"></param>
+        /// <returns></returns>
+        public static string VerifyPasswordResetCode(string code, string webAPIKey)
+        {
+            var client = new HttpClient();
+
+            var payload = new Dictionary<string, string>
+                {
+                    { "oobCode" , code}
+                };
+
+            var content = new FormUrlEncodedContent(payload);
+            var response = client.PostAsync(verifyResetPasswordEndPoint + webAPIKey, content);
+            response.Wait();
+            var responseString = response.Result.Content.ReadAsStringAsync();
+            responseString.Wait();
+
+            if (responseString.Result != null && responseString.Result != "")
+            {
+                if (responseString.Result.Contains("NOT_ALLOWED") || responseString.Result.Contains("INVALID") || responseString.Result.Contains("EXPIRED"))
+                    return "expired";
+
+                var resetPasswordResponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseString.Result);
+                Console.WriteLine(resetPasswordResponse["email"].ToString());
+                return resetPasswordResponse["email"].ToString();
+            }
+
+            throw new Exception("Password Reset Failed. Try again");
         }
 
         /// <summary>

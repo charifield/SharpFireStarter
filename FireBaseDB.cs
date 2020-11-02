@@ -110,7 +110,82 @@ namespace SharpFireStarter
 
         }
 
+        public bool ChangePasswordWithOOBCode(string resetCode, string newPassword)
+        {
+            //Validate Request
+            if (resetCode == string.Empty)
+            {
+                Logger.Log("Reset code was not proved.");
+                return false;
+            }
+
+            if (newPassword == string.Empty)
+            {
+                Logger.Log("New password was not proved.");
+                return false;
+            }
+
+            string passwordResetWithCode = Activity.Auth.ChangePasswordWithOOBCode(resetCode, newPassword, webAPIKey);
+
+            if (passwordResetWithCode != null && passwordResetWithCode != "expired")
+            {
+                Logger.Log("Password was successfully changed");
+                return true;
+            }
+            else
+            {
+                Logger.Log("Password reset code was invalid or expired");
+                return false;
+            }
+        }
+
         public bool SendPasswordResetEmail(string email)
+        {
+            //Validate Request
+            if (email == string.Empty)
+            {
+                Logger.Log("Email for Auth not provided.");
+                return false;
+            }
+
+            bool sendResetEamil = Activity.Auth.ResetPassword(email.Trim(), webAPIKey);
+
+            if (sendResetEamil == true)
+            {
+                Logger.Log("Password reset email has been sent");
+                return sendResetEamil;
+            }
+            else
+            {
+                Logger.Log("Failed to Send Email Reset Password. Check your email address.");
+                return sendResetEamil;
+            }
+        }
+
+        public string VerifyPasswordResetCode(string resetCode)
+        {
+            //Validate Request
+            if (resetCode == string.Empty)
+            {
+                Logger.Log("Reset code was not proved.");
+                return null;
+            }
+
+            string passwordResetCodeEmail = Activity.Auth.VerifyPasswordResetCode(resetCode, webAPIKey);
+
+            if (passwordResetCodeEmail != null && passwordResetCodeEmail != "expired")
+            {
+                Logger.Log("Password reset code was valid");
+                return passwordResetCodeEmail;
+            }
+            else
+            {
+                Logger.Log("Password reset code was invalid or expired");
+                return "expired";
+            }
+        }
+
+        public bool SendPasswordResetEmail(string email, string newPassword)
         {
             //Validate Request
             if (email == string.Empty)
