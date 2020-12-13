@@ -16,7 +16,7 @@ namespace SharpFireStarter.Activity
         {
             string endpoint = "";
 
-            if (oAuth != "")
+            if (oAuth != null && oAuth != "")
             {
                 endpoint = string.Format("{0}/{1}.json?auth={2}", appID, node, oAuth);
             }
