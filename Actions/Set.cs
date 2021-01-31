@@ -34,7 +34,11 @@ namespace SharpFireStarter.Activity
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
                 //string json = "[  { \"ReferenceId\": \"a123\"  } ]";
-                var newData = JsonConvert.SerializeObject(data);
+                var newData = "";
+                if (data is string)
+                    newData = data.ToString();
+                else
+                    newData = JsonConvert.SerializeObject(data);
                 streamWriter.Write(newData);
                 streamWriter.Flush();
                 streamWriter.Close();
