@@ -28,8 +28,6 @@ namespace SharpFireStarter.Activity
             {
                 responseBody = reader.ReadToEnd();
             }
-
-
             return responseBody;
         }
     }
