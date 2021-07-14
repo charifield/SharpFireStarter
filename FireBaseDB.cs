@@ -75,6 +75,11 @@ namespace SharpFireStarter
             
         }
 
+        public void SetoAuthToken(string token)
+        {
+            this.oAuthToken = token;
+        }
+
         public User ChangePassword(string email, string oldpassword, string newpassword)
         {
             //Validate Request
