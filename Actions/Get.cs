@@ -10,9 +10,13 @@ namespace SharpFireStarter.Activity
 {
     public class Get
     {
-        public static string GetFromDB(string databaseURL, string node, string oAuth)
+        public static string GetFromDB(string databaseURL, string node, string oAuth, bool runAuthenticated)
         {
-            string url = string.Format("{0}/{1}.json?auth={2}", databaseURL, node, oAuth);
+            string url = string.Format("{0}/{1}.json", databaseURL, node);
+
+            if (runAuthenticated)
+                url += "?auth=" + oAuth;
+
             if (oAuth == null || oAuth == "")
                 url = url.Split('?')[0];
             var req = (HttpWebRequest)WebRequest.Create(url);

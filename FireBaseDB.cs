@@ -273,11 +273,11 @@ namespace SharpFireStarter
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public string GetFromDB(string data)
+        public string GetFromDB(string data, bool runAuthenticated = true)
         {
             try
             {
-                string getData = Activity.Get.GetFromDB(databaseURL, data, oAuthToken);
+                string getData = Activity.Get.GetFromDB(databaseURL, data, oAuthToken, runAuthenticated);
                 if (getData == "" || getData.ToLower() == "null")
                     return null;
 
