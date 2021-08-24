@@ -10,7 +10,7 @@ namespace SharpFireStarter.Activity
 {
     public class Get
     {
-        public static string GetFromDB(string databaseURL, string node, string oAuth, bool runAuthenticated, string orderBy, int limitToFirst, int limitToLast)
+        public static string GetFromDB(string databaseURL, string node, string oAuth, bool runAuthenticated, string orderBy, string startAt, string endAt, string equalTo, int limitToFirst, int limitToLast)
         {
             string url = string.Format("{0}/{1}.json", databaseURL, node);
 
@@ -20,7 +20,16 @@ namespace SharpFireStarter.Activity
             if (orderBy != null)
                 if (url.Contains("?")) url += $"&orderBy=\"{orderBy}\""; else url += $"?orderBy=\"{orderBy}\"";
 
-            if(limitToFirst > 0)
+            if (startAt != null)
+                if (url.Contains("?")) url += $"&startAt=\"{startAt}\""; else url += $"?startAt=\"{startAt}\"";
+
+            if (endAt != null)
+                if (url.Contains("?")) url += $"&endAt=\"{endAt}\""; else url += $"?endAt=\"{endAt}\"";
+
+            if (equalTo != null)
+                if (url.Contains("?")) url += $"&equalTo=\"{equalTo}\""; else url += $"?equalTo=\"{equalTo}\"";
+
+            if (limitToFirst > 0)
                 if (url.Contains("?")) url += $"&limitToFirst={limitToFirst}"; else url += $"?limitToFirst={limitToFirst}";
 
             if (limitToLast > 0)
