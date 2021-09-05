@@ -12,7 +12,7 @@ namespace SharpFireStarter.Activity
     public static class Set
     {
 
-        public static void WriteToDB(string appID, string node, string oAuth, object data)
+        public static void WriteToDB(string appID, string node, string oAuth, object data, bool silent)
         {
             string endpoint = "";
 
@@ -23,6 +23,14 @@ namespace SharpFireStarter.Activity
             else
             {
                 endpoint = string.Format("{0}/{1}.json", appID, node);
+            }
+
+            if (silent)
+            {
+                if (endpoint.Contains("?"))
+                    endpoint += $"&print=silent";
+                else
+                    endpoint += $"?print=silent";
             }
 
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(endpoint);
