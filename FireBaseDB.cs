@@ -278,15 +278,18 @@ namespace SharpFireStarter
         {
             return runGetDataActivity(databaseURL, data, true, null, null, null, null, 0, 0, false);
         }
-
-        public string GetFromDB(string data, bool shallow)
+        public string GetFromDB(string data, bool runAuthenticated)
         {
-            return runGetDataActivity(databaseURL, data, true, null, null, null, null, 0, 0, shallow);
+            return runGetDataActivity(databaseURL, data, runAuthenticated, null, null, null, null, 0, 0, false);
         }
-
         public string GetFromDB(string data, bool runAuthenticated, bool shallow)
         {
             return runGetDataActivity(databaseURL, data, runAuthenticated, null, null, null, null, 0, 0, shallow);
+        }
+
+        public string GetFromDB(string data, bool runAuthenticated, string orderBy)
+        {
+            return runGetDataActivity(databaseURL, data, runAuthenticated, orderBy, null, null, null, 0, 0, false);
         }
 
         public string GetFromDB(string data, bool runAuthenticated, string orderBy, string startAt, string endAt = null, string equalTo = null, int limitToFirst = 0, int limitToLast = 0)

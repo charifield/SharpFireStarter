@@ -35,11 +35,12 @@ namespace SharpFireStarter.Activity
             if (limitToLast > 0)
                 if (url.Contains("?")) url += $"&limitToLast={limitToLast}"; else url += $"?limitToLast={limitToLast}";
 
-            if (shallow != null && shallow != false)
+            if (shallow != false)
                 if (url.Contains("?")) url += $"&shallow=true"; else url += $"?shallow=true";
 
-            if (oAuth == null || oAuth == "")
-                url = url.Split('?')[0];
+            //if (oAuth == null || oAuth == "")
+            //    url = url.Split('?')[0];
+
             var req = (HttpWebRequest)WebRequest.Create(url);
             //req.Credentials = new NetworkCredential(_bcApiUserName, _bcApiUserPassword);
             req.ContentType = "application/json";
