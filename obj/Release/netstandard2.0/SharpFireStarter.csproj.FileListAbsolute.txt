@@ -6,4 +6,4 @@ C:\Personal Projects\SharpFireStarter\obj\Release\netstandard2.0\SharpFireStarte
 C:\Personal Projects\SharpFireStarter\obj\Release\netstandard2.0\SharpFireStarter.csproj.CoreCompileInputs.cache
 C:\Personal Projects\SharpFireStarter\obj\Release\netstandard2.0\SharpFireStarter.dll
 C:\Personal Projects\SharpFireStarter\obj\Release\netstandard2.0\SharpFireStarter.pdb
-C:\Personal Projects\SharpFireStarter\obj\Release\netstandard2.0\SharpFireStarter.csprojAssemblyReference.cache
+C:\Personal Projects\SharpFireStarter\obj\Release\netstandard2.0\SharpFireStarter.csproj.AssemblyReference.cache

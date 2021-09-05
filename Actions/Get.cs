@@ -10,7 +10,7 @@ namespace SharpFireStarter.Activity
 {
     public class Get
     {
-        public static string GetFromDB(string databaseURL, string node, string oAuth, bool runAuthenticated, string orderBy, string startAt, string endAt, string equalTo, int limitToFirst, int limitToLast)
+        public static string GetFromDB(string databaseURL, string node, string oAuth, bool runAuthenticated, string orderBy, string startAt, string endAt, string equalTo, int limitToFirst, int limitToLast, bool shallow)
         {
             string url = string.Format("{0}/{1}.json", databaseURL, node);
 
@@ -34,6 +34,9 @@ namespace SharpFireStarter.Activity
 
             if (limitToLast > 0)
                 if (url.Contains("?")) url += $"&limitToLast={limitToLast}"; else url += $"?limitToLast={limitToLast}";
+
+            if (shallow != null && shallow != false)
+                if (url.Contains("?")) url += $"&shallow=true"; else url += $"?shallow=true";
 
             if (oAuth == null || oAuth == "")
                 url = url.Split('?')[0];

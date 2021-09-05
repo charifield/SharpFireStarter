@@ -12,12 +12,16 @@ namespace SharpFireStarter
     {
         //Stored Variables
 
-        private string databaseURL { get; set; }
-        private string webAPIKey { get; set; }
-        private string oAuthToken { get; set; }
+        public string databaseURL { get; set; }
+        public string webAPIKey { get; set; }
+        public string oAuthToken { get; set; }
         public User currentUser { get; set; }
 
 
+        public FireBaseDB()
+        {
+
+        }
         /// <summary>
         /// Initialize FirebaseConnector with AppID and WebAPI Key (Found on your Firebase Console Online)
         /// </summary>
@@ -268,21 +272,40 @@ namespace SharpFireStarter
             return true;
         }
 
-        /// <summary>
-        /// Get Data from the Firebasse DB
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public string GetFromDB(string data, bool runAuthenticated = true, string orderBy = null, string startAt = null, string endAt = null, string equalTo = null, int limitToFirst = 0, int limitToLast = 0)
+        //############################  GET DATA FROM DB ############################
+
+        public string GetFromDB(string data)
+        {
+            return runGetDataActivity(databaseURL, data, true, null, null, null, null, 0, 0, false);
+        }
+
+        public string GetFromDB(string data, bool shallow)
+        {
+            return runGetDataActivity(databaseURL, data, true, null, null, null, null, 0, 0, shallow);
+        }
+
+        public string GetFromDB(string data, bool runAuthenticated, bool shallow)
+        {
+            return runGetDataActivity(databaseURL, data, runAuthenticated, null, null, null, null, 0, 0, shallow);
+        }
+
+        public string GetFromDB(string data, bool runAuthenticated, string orderBy, string startAt, string endAt = null, string equalTo = null, int limitToFirst = 0, int limitToLast = 0)
+        {
+            return runGetDataActivity(databaseURL, data, runAuthenticated, orderBy, startAt, endAt, equalTo, limitToFirst, limitToLast, false);            
+        }
+
+
+        private string runGetDataActivity(string databaseURL, string data, bool runAuthenticated = true, string orderBy = null, string startAt = null, string endAt = null, string equalTo = null, int limitToFirst = 0, int limitToLast = 0, bool shallow = false)
         {
             try
             {
-                string getData = Activity.Get.GetFromDB(databaseURL, data, oAuthToken, runAuthenticated, orderBy, startAt, endAt, equalTo, limitToFirst, limitToLast);
+                string getData = Activity.Get.GetFromDB(databaseURL, data, oAuthToken, runAuthenticated, orderBy, startAt, endAt, equalTo, limitToFirst, limitToLast, shallow);
                 if (getData == "" || getData.ToLower() == "null")
                     return null;
 
                 return getData;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Logger.Log(ex.Message);
                 return null;
