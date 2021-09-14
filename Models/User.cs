@@ -20,5 +20,13 @@ namespace SharpFireStarter
         //Used for loggin in and out
         public string localId { get; set; }
         public string instanceId { get; set; }
+        public string meta { get; set; }
+
+        public User()
+        {
+            meta = "";
+        }
     }
+
+    
 }
