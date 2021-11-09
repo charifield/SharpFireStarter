@@ -12,11 +12,11 @@ namespace SharpFireStarter.Activity
     public static class Set
     {
 
-        public static void WriteToDB(string appID, string node, string oAuth, object data, bool silent)
+        public static void WriteToDB(string appID, string node, string oAuth, object data, bool runAuthenticated, bool silent)
         {
             string endpoint = "";
 
-            if (oAuth != null && oAuth != "")
+            if (runAuthenticated && (oAuth != null && oAuth != ""))
             {
                 endpoint = string.Format("{0}/{1}.json?auth={2}", appID, node, oAuth);
             }

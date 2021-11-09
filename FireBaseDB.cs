@@ -258,13 +258,27 @@ namespace SharpFireStarter
         /// Write to the Firebase DB
         /// </summary>
         /// <param name="data"></param>
-        public bool WriteToDB(string node, object data, bool silent = true)
+        public bool WriteToDB(string node, object data, bool runAuthenticated = true)
         {
             try
             {
-                Activity.Set.WriteToDB(databaseURL, node, oAuthToken, data, silent);
+                Activity.Set.WriteToDB(databaseURL, node, oAuthToken, data, runAuthenticated, true);
             } 
             catch(Exception ex)
+            {
+                Console.WriteLine("Write to DB Failed: " + ex.Message);
+                return false;
+            }
+            return true;
+        }
+
+        public bool WriteToDB(string node, object data, bool runAuthenticated, bool silent = true)
+        {
+            try
+            {
+                Activity.Set.WriteToDB(databaseURL, node, oAuthToken, data, runAuthenticated, silent);
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine("Write to DB Failed: " + ex.Message);
                 return false;

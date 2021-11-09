@@ -14,7 +14,7 @@ namespace SharpFireStarter.Activity
         {
             string url = string.Format("{0}/{1}.json", databaseURL, node);
 
-            if (runAuthenticated)
+            if (runAuthenticated && (oAuth != null && oAuth != ""))
                 url += "?auth=" + oAuth;
 
             if (orderBy != null)
