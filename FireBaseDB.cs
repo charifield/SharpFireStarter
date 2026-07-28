@@ -1,4 +1,5 @@
 ﻿using SharpFireStarter.Activity;
+using SharpFireStarter.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace SharpFireStarter
         public string databaseURL { get; set; }
         public string webAPIKey { get; set; }
         public string oAuthToken { get; set; }
+        public string refreshToken { get; set; }
         public User currentUser { get; set; }
 
 
@@ -79,9 +81,56 @@ namespace SharpFireStarter
             
         }
 
+        public User AuthenticateOAuth(string OAuthCode)
+        {
+            //Validate Request
+            if (OAuthCode == null)
+            {
+                Logger.Log("OAuth Token for Auth not provided.");
+                return null;
+            }
+
+            User user = Activity.Auth.AuthenticateOAuth(OAuthCode, webAPIKey);
+
+            if (user != null)
+            {
+                currentUser = user;
+                oAuthToken = user.idToken;
+                Logger.Log("oAuth Token Received: " + oAuthToken);
+                return user;
+            }
+            else
+            {
+                Logger.Log("Failed to Authenticate. Check your Username and Password.");
+                return null;
+            }
+        }
+
         public void SetoAuthToken(string token)
         {
             this.oAuthToken = token;
+        }
+
+        /// <summary>
+        /// Update the user's display name in Firebase Auth
+        /// </summary>
+        /// <param name="idToken">The user's current ID token</param>
+        /// <param name="displayName">The new display name to set</param>
+        /// <returns>True if successful, false otherwise</returns>
+        public bool UpdateDisplayName(string idToken, string displayName)
+        {
+            return Activity.Auth.UpdateDisplayName(idToken, displayName, webAPIKey);
+        }
+
+        /// <summary>
+        /// Update the user's display name in Firebase Auth (async version)
+        /// </summary>
+        /// <param name="idToken">The user's current ID token</param>
+        /// <param name="displayName">The new display name to set</param>
+        /// <returns>True if successful, false otherwise</returns>
+        public async Task<bool> UpdateDisplayNameAsync(string idToken, string displayName)
+        {
+            return await Activity.Auth.UpdateDisplayNameAsync(idToken, displayName, webAPIKey);
         }
 
         public User ChangePassword(string email, string oldpassword, string newpassword)
@@ -263,13 +312,33 @@ namespace SharpFireStarter
             try
             {
                 Activity.Set.WriteToDB(databaseURL, node, oAuthToken, data, runAuthenticated, true);
+                return true;
             } 
             catch(Exception ex)
             {
+                // Check if it's a token expiration error and retry with refresh
+                if (IsTokenExpiredError(ex) && !string.IsNullOrEmpty(refreshToken) && !string.IsNullOrEmpty(webAPIKey))
+                {
+                    Logger.Log("Token expired during write, attempting refresh and retry...");
+                    if (RefreshTokenInternal())
+                    {
+                        try
+                        {
+                            Logger.Log("Retrying write with refreshed token...");
+                            Activity.Set.WriteToDB(databaseURL, node, oAuthToken, data, runAuthenticated, true);
+                            return true;
+                        }
+                        catch (Exception retryEx)
+                        {
+                            Console.WriteLine("Write to DB retry after token refresh failed: " + retryEx.Message);
+                            return false;
+                        }
+                    }
+                }
+
                 Console.WriteLine("Write to DB Failed: " + ex.Message);
                 return false;
             }
-            return true;
         }
 
         public bool WriteToDB(string node, object data, bool runAuthenticated, bool silent = true)
@@ -277,13 +346,71 @@ namespace SharpFireStarter
             try
             {
                 Activity.Set.WriteToDB(databaseURL, node, oAuthToken, data, runAuthenticated, silent);
+                return true;
             }
             catch (Exception ex)
             {
+                // Check if it's a token expiration error and retry with refresh
+                if (IsTokenExpiredError(ex) && !string.IsNullOrEmpty(refreshToken) && !string.IsNullOrEmpty(webAPIKey))
+                {
+                    Logger.Log("Token expired during write, attempting refresh and retry...");
+                    if (RefreshTokenInternal())
+                    {
+                        try
+                        {
+                            Logger.Log("Retrying write with refreshed token...");
+                            Activity.Set.WriteToDB(databaseURL, node, oAuthToken, data, runAuthenticated, silent);
+                            return true;
+                        }
+                        catch (Exception retryEx)
+                        {
+                            Console.WriteLine("Write to DB retry after token refresh failed: " + retryEx.Message);
+                            return false;
+                        }
+                    }
+                }
+
                 Console.WriteLine("Write to DB Failed: " + ex.Message);
                 return false;
             }
-            return true;
+        }
+
+        /// <summary>
+        /// Set (replace) a node in Firebase DB - uses PUT instead of PATCH
+        /// Use this when you want to completely replace a node rather than merge
+        /// </summary>
+        public bool SetToDB(string node, object data, bool runAuthenticated = true)
+        {
+            try
+            {
+                Activity.Set.SetToDB(databaseURL, node, oAuthToken, data, runAuthenticated, true);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Check if it's a token expiration error and retry with refresh
+                if (IsTokenExpiredError(ex) && !string.IsNullOrEmpty(refreshToken) && !string.IsNullOrEmpty(webAPIKey))
+                {
+                    Logger.Log("Token expired during set, attempting refresh and retry...");
+                    if (RefreshTokenInternal())
+                    {
+                        try
+                        {
+                            Logger.Log("Retrying set with refreshed token...");
+                            Activity.Set.SetToDB(databaseURL, node, oAuthToken, data, runAuthenticated, true);
+                            return true;
+                        }
+                        catch (Exception retryEx)
+                        {
+                            Console.WriteLine("Set to DB retry after token refresh failed: " + retryEx.Message);
+                            return false;
+                        }
+                    }
+                }
+
+                Console.WriteLine("Set to DB Failed: " + ex.Message);
+                return false;
+            }
         }
 
         //############################  GET DATA FROM DB ############################
@@ -324,8 +451,96 @@ namespace SharpFireStarter
             }
             catch (Exception ex)
             {
+                // Check if it's a token expiration error and retry with refresh
+                if (IsTokenExpiredError(ex) && !string.IsNullOrEmpty(refreshToken) && !string.IsNullOrEmpty(webAPIKey))
+                {
+                    Logger.Log("Token expired, attempting refresh and retry...");
+                    if (RefreshTokenInternal())
+                    {
+                        try
+                        {
+                            Logger.Log("Retrying request with refreshed token...");
+                            string getData = Activity.Get.GetFromDB(databaseURL, data, oAuthToken, runAuthenticated, orderBy, startAt, endAt, equalTo, limitToFirst, limitToLast, shallow);
+                            if (getData == "" || getData.ToLower() == "null")
+                                return null;
+
+                            return getData;
+                        }
+                        catch (Exception retryEx)
+                        {
+                            Logger.Log("Retry after token refresh failed: " + retryEx.Message);
+                            return null;
+                        }
+                    }
+                }
+
                 Logger.Log(ex.Message);
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Check if the exception indicates a token expiration
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <returns></returns>
+        private bool IsTokenExpiredError(Exception ex)
+        {
+            if (ex == null) return false;
+            
+            string message = ex.Message.ToLower();
+            return message.Contains("401") || 
+                   message.Contains("unauthorized") || 
+                   message.Contains("token expired") || 
+                   message.Contains("invalid token") ||
+                   message.Contains("permission denied");
+        }
+
+        /// <summary>
+        /// Refresh the current token using the stored refresh token
+        /// </summary>
+        /// <returns></returns>
+        private bool RefreshTokenInternal()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(refreshToken) || string.IsNullOrEmpty(webAPIKey))
+                {
+                    Logger.Log("Cannot refresh token: refresh token or webAPIKey missing");
+                    return false;
+                }
+
+                // Create a temporary user object for the refresh operation
+                var tempUser = new User { refreshToken = this.refreshToken };
+                
+                var refreshResult = Activity.Auth.RefreshAuthToken(ref tempUser, webAPIKey);
+                
+                if (refreshResult != null && !string.IsNullOrEmpty(refreshResult.id_token))
+                {
+                    // Update stored tokens
+                    this.oAuthToken = refreshResult.id_token;
+                    this.refreshToken = refreshResult.refresh_token;
+                    
+                    // Update current user if exists
+                    if (currentUser != null)
+                    {
+                        currentUser.idToken = refreshResult.id_token;
+                        currentUser.refreshToken = refreshResult.refresh_token;
+                    }
+                    
+                    Logger.Log("Token refreshed successfully");
+                    return true;
+                }
+                else
+                {
+                    Logger.Log("Token refresh failed: no valid response");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("Token refresh failed: " + ex.Message);
+                return false;
             }
         }
     }

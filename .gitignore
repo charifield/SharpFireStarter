@@ -1,9 +1,5 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
 
-*.pdb
-bin/
-bin/Debug/
-bin/Debug/SharpFireStarter.dll
-*.cache
-*.lock
-
-
+/bin

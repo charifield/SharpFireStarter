@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +22,10 @@ namespace SharpFireStarter.Activity
 
 
         private static readonly string authEndPoint = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=";
+        private static readonly string authEndpointOAuth = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=";
         private static readonly string authRefreshTokenEndPoint = "https://securetoken.googleapis.com/v1/token?key=";
+
+        private static readonly string authOauthTokenEndPoint = "https://accounts.google.com/o/oauth2/token?key=";
 
         private static readonly string signUpEndPoint = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=";
         private static readonly string signOutEndPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signOutUser?key=";
@@ -61,6 +66,11 @@ namespace SharpFireStarter.Activity
 
                 if (responseString.Result != null && responseString.Result != "")
                 {
+                    // Ensure error was not encountered. Error node will not be null if error has occurred
+                    var errorCheck = JObject.Parse(responseString.Result)["error"];
+                    if (errorCheck != null)
+                        throw new UnauthorizedAccessException(errorCheck["message"].ToString());
+
                     var userObject = JsonConvert.DeserializeObject<User>(responseString.Result);
                     userObject.instanceId = authValues["instanceId"];
 
@@ -83,6 +93,41 @@ namespace SharpFireStarter.Activity
                 Log("Client Connection Closed");
             }
         }
+
+        public static User AuthenticateOAuth(string OAuthCode, string webAPIKey)
+        {
+            Log(string.Format("Begin Authentication for {0}...", OAuthCode));
+            var client = new HttpClient();
+            var taskResult = new TaskCompletionSource<string>();
+            taskResult.SetResult("");
+
+            
+
+            try
+            {
+                var userObject = new User { refreshToken = OAuthCode };
+                //var userObject = JsonConvert.DeserializeObject<User>(responseString.Result);
+                //userObject.instanceId = authValues["instanceId"];
+
+                //Get User ID
+                var newToken = RefreshAuthToken(ref userObject, webAPIKey);
+                return userObject;
+
+
+            }
+            catch (Exception ex)
+            {
+                Log(ex.Message);
+                return null;
+            }
+            finally
+            {
+                client.CancelPendingRequests();
+                client.Dispose();
+                Log("Client Connection Closed");
+            }
+        }
+
 
         /// <summary>
         /// Change user password
@@ -339,6 +384,122 @@ namespace SharpFireStarter.Activity
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// Update the user's display name in Firebase Auth
+        /// </summary>
+        /// <param name="idToken">The user's current ID token</param>
+        /// <param name="displayName">The new display name to set</param>
+        /// <param name="webAPIKey">Firebase Web API Key</param>
+        /// <returns>True if successful, false otherwise</returns>
+        public static bool UpdateDisplayName(string idToken, string displayName, string webAPIKey)
+        {
+            if (string.IsNullOrEmpty(idToken) || string.IsNullOrEmpty(displayName) || string.IsNullOrEmpty(webAPIKey))
+            {
+                Log("UpdateDisplayName: Missing required parameters");
+                return false;
+            }
+
+            var client = new HttpClient();
+
+            try
+            {
+                var payload = new Dictionary<string, string>
+                {
+                    { "idToken", idToken },
+                    { "displayName", displayName },
+                    { "returnSecureToken", "true" }
+                };
+
+                var content = new FormUrlEncodedContent(payload);
+                var response = client.PostAsync(changePasswordEndPoint + webAPIKey, content);
+                response.Wait();
+                var responseString = response.Result.Content.ReadAsStringAsync();
+                responseString.Wait();
+
+                if (responseString.Result != null && responseString.Result != "")
+                {
+                    // Check for error response
+                    if (responseString.Result.Contains("\"error\""))
+                    {
+                        Log("UpdateDisplayName failed: " + responseString.Result);
+                        return false;
+                    }
+
+                    Log("DisplayName updated successfully to: " + displayName);
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Log("UpdateDisplayName error: " + ex.Message);
+                return false;
+            }
+            finally
+            {
+                client.CancelPendingRequests();
+                client.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Update the user's display name in Firebase Auth (async version)
+        /// </summary>
+        /// <param name="idToken">The user's current ID token</param>
+        /// <param name="displayName">The new display name to set</param>
+        /// <param name="webAPIKey">Firebase Web API Key</param>
+        /// <returns>True if successful, false otherwise</returns>
+        public static async Task<bool> UpdateDisplayNameAsync(string idToken, string displayName, string webAPIKey)
+        {
+            if (string.IsNullOrEmpty(idToken) || string.IsNullOrEmpty(displayName) || string.IsNullOrEmpty(webAPIKey))
+            {
+                Log("UpdateDisplayNameAsync: Missing required parameters");
+                return false;
+            }
+
+            var client = new HttpClient();
+            client.Timeout = TimeSpan.FromSeconds(10);
+
+            try
+            {
+                var payload = new Dictionary<string, string>
+                {
+                    { "idToken", idToken },
+                    { "displayName", displayName },
+                    { "returnSecureToken", "true" }
+                };
+
+                var content = new FormUrlEncodedContent(payload);
+                var response = await client.PostAsync(changePasswordEndPoint + webAPIKey, content);
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(responseString))
+                {
+                    // Check for error response
+                    if (responseString.Contains("\"error\""))
+                    {
+                        Log("UpdateDisplayNameAsync failed: " + responseString);
+                        return false;
+                    }
+
+                    Log("DisplayName updated successfully to: " + displayName);
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Log("UpdateDisplayNameAsync error: " + ex.Message);
+                return false;
+            }
+            finally
+            {
+                client.Dispose();
+            }
         }
 
         /// <summary>
